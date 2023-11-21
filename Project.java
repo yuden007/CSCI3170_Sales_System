@@ -7,10 +7,10 @@ import java.text.SimpleDateFormat;
 
 public class Project {
     public static Scanner input = new Scanner(System.in);
+
     public static String dbAddress = "jdbc:mysql://projgw.cse.cuhk.edu.hk:2633/db38?autoReconnect=true&useSSL=false";
     public static String dbUsername = "Group38";
     public static String dbPassword = "CSCI3170";
-
     public static Connection connectToMySQL(){
             Connection con = null;
             try{
@@ -55,7 +55,6 @@ public class Project {
     }
     
     public static void administrator() {
-        //Scanner input = new Scanner(System.in);
         do{
             System.out.println("\n-----Operations for administrator menu-----");
             System.out.println("What kinds of operation would you like to perform?");
@@ -69,6 +68,60 @@ public class Project {
             
             switch(option) {
                 case 1:
+                    String categorySql = "create table if not exists part_category ("
+                            + "cID integer, "
+                            + "cName char(20), "
+                            + "primary key(cID));";
+                    
+                    String manufacturerSql = "create table if not exists manufacturer ("
+                            + "mID integer, "
+                            + "mName char(20), "
+                            + "mAddress char(50), "
+                            + "mPhoneNumber integer, "
+                            + "primary key(mID));";
+                    
+                    String partSql = "create table if not exists computer_part ("
+                            + "pID integer, "
+                            + "pName char(20), "
+                            + "pPrice integer, "
+                            + "mID integer, "
+                            + "cID integer,"
+                            + "pWarrantyPeriod integer, "
+                            + "pAvailableQuantity integer, "
+                            + "primary key(pID), "
+                            + "foreign key(cID) references part_category(cID) on update cascade on delete cascade, "
+                            + "foreign key(mID) references manufacturer(mID) on update cascade on delete cascade);";
+                    
+                    String salespersonSql = "create table if not exists salesperson ("
+                            + "sID integer, "
+                            + "sName char(20), "
+                            + "sAddress char(20), "
+                            + "sPhoneNumber integer, "
+                            + "sExperience integer, "
+                            + "primary key(sID);";
+                    
+                    String transactionSql = "create table if not exists transaction ("
+                            + "tID integer, "
+                            + "pID integer, "
+                            + "sID integer, "
+                            + "tDate datetime, "
+                            + "primary key(tID)), "
+                            + "foreign key(sID) references salesperson(sID) on update cascade on delete cascade, "
+                            + "foreign key(pID) references computer_part(pID) on update cascade on delete cascade);";
+                    
+                    try {
+                        System.out.print("Processing...");
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        sql.executeUpdate(categorySql);
+                        sql.executeUpdate(manufacturerSql);
+                        sql.executeUpdate(partSql);
+                        sql.executeUpdate(salespersonSql);
+                        sql.executeUpdate(transactionSql);
+                        System.out.println("Done! Tables are created");
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
                     break;
                 case 2:
                     break;
@@ -85,7 +138,6 @@ public class Project {
     }
     
     public static void salesperson() {
-        //Scanner input = new Scanner(System.in);
         do{
             System.out.println("\n-----Operations for salesperson menu-----");
             System.out.println("1. Search for parts");
@@ -111,7 +163,6 @@ public class Project {
     }
     
     public static void manager() {
-        //Scanner input = new Scanner(System.in);
         do{
             System.out.println("\n-----Operations for manager menu-----");
             System.out.println("What kinds of operation would you like to perform?");
