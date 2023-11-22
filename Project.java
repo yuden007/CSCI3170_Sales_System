@@ -98,14 +98,14 @@ public class Project {
                             + "sAddress char(20), "
                             + "sPhoneNumber integer, "
                             + "sExperience integer, "
-                            + "primary key(sID);";
+                            + "primary key(sID));";
                     
                     String transactionSql = "create table if not exists transaction ("
                             + "tID integer, "
                             + "pID integer, "
                             + "sID integer, "
                             + "tDate datetime, "
-                            + "primary key(tID)), "
+                            + "primary key(tID), "
                             + "foreign key(sID) references salesperson(sID) on update cascade on delete cascade, "
                             + "foreign key(pID) references computer_part(pID) on update cascade on delete cascade);";
                     
@@ -113,10 +113,15 @@ public class Project {
                         System.out.print("Processing...");
                         Connection mysql = connectToMySQL();
                         Statement sql = mysql.createStatement();
+                        System.out.println("one");
                         sql.executeUpdate(categorySql);
+                        System.out.println("two");
                         sql.executeUpdate(manufacturerSql);
+                        System.out.println("three");
                         sql.executeUpdate(partSql);
+                        System.out.println("four");
                         sql.executeUpdate(salespersonSql);
+                        System.out.println("five");
                         sql.executeUpdate(transactionSql);
                         System.out.println("Done! Tables are created");
                     } catch(Exception e) {
