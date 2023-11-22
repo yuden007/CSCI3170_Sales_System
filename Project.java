@@ -148,95 +148,10 @@ public class Project {
                     }
                     break;
                 case 3:
-                    System.out.println("Type in the Source Data Folder Path: ");
+                    System.out.print("Type in the Source Data Folder Path: ");
                     String path = input.next();
                     input.nextLine();
                     System.out.print("Processing...");
-                    /*
-                    try {   System.out.println("\n\ncategory input starts");
-                        File file = new File(path + "/category.txt");
-                        Scanner scanner = new Scanner(file);
-                        while (scanner.hasNextLine()) {
-                            String line = scanner.nextLine();
-                            String[] attributes = line.split("\t");
-                            String temp = attributes[0] + ", '" + attributes[1] + "'";
-                            System.out.println(temp);
-                            Connection mysql = connectToMySQL();
-                            Statement sql = mysql.createStatement();
-                            sql.executeUpdate("insert into part_category values (" + temp + ")");
-                        }
-                    } catch(Exception e) {
-                        System.out.print(e);
-                    }
-                    
-                    try {   System.out.println("\n\nmanufacturer input starts");
-                        File file = new File(path + "/manufacturer.txt");
-                        Scanner scanner = new Scanner(file);
-                        while (scanner.hasNextLine()) {
-                            String line = scanner.nextLine();
-                            String[] attributes = line.split("\t");
-                            String temp = attributes[0] + ", '" + attributes[1] + "', '" + attributes[2] + "', " + attributes[3];
-                            System.out.println(temp);
-                            Connection mysql = connectToMySQL();
-                            Statement sql = mysql.createStatement();
-                            sql.executeUpdate("insert into manufacturer values (" + temp + ")");
-                        }
-                    } catch(Exception e) {
-                        System.out.print(e);
-                    }
-                    
-                    try {   System.out.println("\n\npart input starts");
-                        File file = new File(path + "/part.txt");
-                        Scanner scanner = new Scanner(file);
-                        while (scanner.hasNextLine()) {
-                            String line = scanner.nextLine();
-                            String[] attributes = line.split("\t");
-                            String temp = attributes[0] + ", '" + attributes[1] + "', " + attributes[2] + ", " + attributes[3] + ", " + attributes[4] + ", " + attributes[5] + ", " + attributes[6];
-                            System.out.println(temp);
-                            Connection mysql = connectToMySQL();
-                            Statement sql = mysql.createStatement();
-                            sql.executeUpdate("insert into computer_part values (" + temp + ")");
-                        }
-                    } catch(Exception e) {
-                        System.out.print(e);
-                    }
-
-                    try {   System.out.println("\n\nsalesperson input starts");
-                        File file = new File(path + "/salesperson.txt");
-                        Scanner scanner = new Scanner(file);
-                        while (scanner.hasNextLine()) {
-                            String line = scanner.nextLine();
-                            String[] attributes = line.split("\t");
-                            String temp = attributes[0] + ", '" + attributes[1] + "', '" + attributes[2] + "', " + attributes[3] + ", " + attributes[4];
-                            System.out.println(temp);
-                            Connection mysql = connectToMySQL();
-                            Statement sql = mysql.createStatement();
-                            sql.executeUpdate("insert into salesperson values (" + temp + ")");
-                        }
-                    } catch(Exception e) {
-                        System.out.print(e);
-                    }
-                    
-                    try {   System.out.println("\n\ntransaction input starts");
-                        File file = new File(path + "/transaction.txt");
-                        Scanner scanner = new Scanner(file);
-                        while (scanner.hasNextLine()) {
-                            String line = scanner.nextLine();
-                            String[] attributes = line.split("\t");
-                            String temp = attributes[0] + ", " + attributes[1] + ", " + attributes[2] + ", '" + attributes[3] + "'";
-                            System.out.println(temp);
-                            Connection mysql = connectToMySQL();
-                            Statement sql = mysql.createStatement();
-                            sql.executeUpdate("insert into transaction values (" + temp + ")");
-
-                            //SimpleDateFormat sdf = new SimpleDateFormat ("dd/MM/yyyy");
-                            //java.sql.Date sqldate = new java.sql.Date(sdf.parse(transactionInfo[i][3]).getTime());
-                            //transactionPS.setDate(4,sqldate);
-                        }
-                    } catch(Exception e) {
-                        System.out.print(e);
-                    }
-                    */
                           
                     String[][] categoryInfo = new String [10000][2];
                     String[][] manufacturerInfo = new String [10000][4];
