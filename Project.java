@@ -288,7 +288,7 @@ public class Project {
                             transactionPS.setDate(4,sqldate);
                             transactionPS.executeUpdate();
                         }
-                        System.out.println("Data is inputted to the Database!");
+                        System.out.println("Data is inputted to the database!");
                     } catch(Exception e) {
                         System.out.println(e);
                     }
@@ -317,7 +317,6 @@ public class Project {
                             while (categoryRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = categoryRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -344,7 +343,6 @@ public class Project {
                             while (manufacturerRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = manufacturerRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -371,7 +369,6 @@ public class Project {
                             while (partRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = partRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -398,7 +395,6 @@ public class Project {
                             while (salespersonRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = salespersonRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -425,7 +421,6 @@ public class Project {
                             while (transactionRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = transactionRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -457,12 +452,57 @@ public class Project {
             
             int option = input.nextInt();
             input.nextLine();
-            //int option = Integer.parseInt(input.nextLine());
             
             switch(option) {
                 case 1:
+                    System.out.println("Choose the Search criterion: ");
+                    System.out.println("1. Part Name");
+                    System.out.println("2. Manufacturer Name");
+                    System.out.print("Choose the Search criterion: ");
+                    int criterion = input.nextInt();
+                    input.nextLine();
+                    System.out.print("Type in the Search Keyword: ");
+                    String keyword = input.nextLine();
+                    System.out.println("Choose ordering: ");
+                    System.out.println("1. By price, ascending order ");
+                    System.out.println("2. By price, descending order");
+                    System.out.print("Choose ordering: ");
+                    int ordering = input.nextInt();
+                    input.nextLine();
+                    String order = "";
+                    if (ordering == 1) order = "asc";
+                    else if (ordering == 2) order = "desc";
+                    String searchPart = "";
+                    if (criterion == 1) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where p.pName = '" + keyword + "' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
+                    else if (criterion == 2) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where m.mName = '" + keyword + "' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
+                    try {
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet partRS;
+                        partRS = sql.executeQuery(searchPart);
+                        ResultSetMetaData metaData = partRS.getMetaData();
+                        int columnCount = metaData.getColumnCount();
+                        System.out.println("| ID | Name | Manufacturer | Category | Quantity | Warranty | Price |");
+                        while (partRS.next()) {
+                            System.out.print("| ");
+                            for (int i = 1; i <= columnCount; i++) {
+                                Object value = partRS.getObject(i);
+                                System.out.print(value + " | ");
+                            }
+                            System.out.println();
+                        }
+                        System.out.println("End of Query");
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
                     break;  
                 case 2:
+                    System.out.print("Enter The Part ID: ");
+                    int partID = input.nextInt();
+                    input.nextLine();
+                    System.out.print("Enter The Salesperson ID: ");
+                    int salespersonID = input.nextInt();
+                    input.nextLine();
                     break;
                 case 3:
                     return;
