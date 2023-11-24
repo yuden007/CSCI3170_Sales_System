@@ -1,9 +1,9 @@
-//package project;
 import java.sql.*;
 import java.io.*;
 import java.util.Scanner;
-import java.util.Arrays;
+import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 
 public class Project {
     public static Scanner input = new Scanner(System.in);
@@ -237,7 +237,6 @@ public class Project {
 
                     try{
                         Connection mysql = connectToMySQL();
-                        Statement sql = mysql.createStatement();
                         PreparedStatement categoryPS = mysql.prepareStatement(categoryInsert);
                         PreparedStatement manufacturerPS = mysql.prepareStatement(manufacturerInsert);
                         PreparedStatement partPS = mysql.prepareStatement(partInsert);
@@ -278,17 +277,17 @@ public class Project {
                             salespersonPS.executeUpdate();
                         }
 
-
                         for(int i = 0; transactionInfo[i][0] != null; i++) {
-                            SimpleDateFormat sdf = new SimpleDateFormat ("dd/MM/yyyy");
+                            SimpleDateFormat inputDate = new SimpleDateFormat ("dd/MM/yyyy");
                             transactionPS.setInt(1, Integer.parseInt(transactionInfo[i][0]));
                             transactionPS.setInt(2, Integer.parseInt(transactionInfo[i][1]));
                             transactionPS.setInt(3, Integer.parseInt(transactionInfo[i][2]));
-                            java.sql.Date sqldate = new java.sql.Date(sdf.parse(transactionInfo[i][3]).getTime());
-                            transactionPS.setDate(4,sqldate);
+                            Date date = inputDate.parse(transactionInfo[i][3]);
+                            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+                            transactionPS.setDate(4,sqlDate);
                             transactionPS.executeUpdate();
                         }
-                        System.out.println("Data is inputted to the Database!");
+                        System.out.println("Data is inputted to the database!");
                     } catch(Exception e) {
                         System.out.println(e);
                     }
@@ -317,7 +316,6 @@ public class Project {
                             while (categoryRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = categoryRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -344,7 +342,6 @@ public class Project {
                             while (manufacturerRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = manufacturerRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -371,7 +368,6 @@ public class Project {
                             while (partRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = partRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -398,7 +394,6 @@ public class Project {
                             while (salespersonRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
                                     Object value = salespersonRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -425,7 +420,13 @@ public class Project {
                             while (transactionRS.next()) {
                                 System.out.print("| ");
                                 for (int i = 1; i <= columnCount; i++) {
-                                    String columnName = metaData.getColumnName(i);
+                                    if(i == 4) {
+                                        SimpleDateFormat outputDate = new SimpleDateFormat ("dd/MM/yyyy");
+                                        Date date = transactionRS.getDate(i);
+                                        String value = outputDate.format(date);
+                                        System.out.print(value + " | ");
+                                        continue;
+                                    }
                                     Object value = transactionRS.getObject(i);
                                     System.out.print(value + " | ");
                                 }
@@ -457,12 +458,88 @@ public class Project {
             
             int option = input.nextInt();
             input.nextLine();
-            //int option = Integer.parseInt(input.nextLine());
             
             switch(option) {
                 case 1:
+                    System.out.println("Choose the Search criterion: ");
+                    System.out.println("1. Part Name");
+                    System.out.println("2. Manufacturer Name");
+                    System.out.print("Choose the Search criterion: ");
+                    int criterion = input.nextInt();
+                    input.nextLine();
+                    System.out.print("Type in the Search Keyword: ");
+                    String keyword = input.nextLine();
+                    System.out.println("Choose ordering: ");
+                    System.out.println("1. By price, ascending order ");
+                    System.out.println("2. By price, descending order");
+                    System.out.print("Choose ordering: ");
+                    int ordering = input.nextInt();
+                    input.nextLine();
+                    String order = "";
+                    if (ordering == 1) order = "asc";
+                    else if (ordering == 2) order = "desc";
+                    String searchPart = "";
+                    if (criterion == 1) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where p.pName = '" + keyword + "' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
+                    else if (criterion == 2) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where m.mName = '" + keyword + "' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
+                    try {
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet partRS;
+                        partRS = sql.executeQuery(searchPart);
+                        ResultSetMetaData metaData = partRS.getMetaData();
+                        int columnCount = metaData.getColumnCount();
+                        System.out.println("| ID | Name | Manufacturer | Category | Quantity | Warranty | Price |");
+                        while (partRS.next()) {
+                            System.out.print("| ");
+                            for (int i = 1; i <= columnCount; i++) {
+                                Object value = partRS.getObject(i);
+                                System.out.print(value + " | ");
+                            }
+                            System.out.println();
+                        }
+                        System.out.println("End of Query");
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
                     break;  
                 case 2:
+                    System.out.print("Enter The Part ID: ");
+                    int partID = input.nextInt();
+                    input.nextLine();
+                    System.out.print("Enter The Salesperson ID: ");
+                    int salespersonID = input.nextInt();
+                    input.nextLine();
+                    String getPartData = "select p.pAvailableQuantity, p.pName from computer_part p where p.pID = " + partID + ";";
+                    String updateQuantity = "update computer_part set pAvailableQuantity = pAvailableQuantity - 1 where pID = " + partID + ";";
+                    String counttID = "select count(*) from transaction";
+                    LocalDate localDate = LocalDate.now();
+                    try {
+                        java.sql.Date sqlDate = java.sql.Date.valueOf(localDate);
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet partDataRS = sql.executeQuery(getPartData);
+                        partDataRS.next();
+                        int partQuantity = partDataRS.getInt(1);
+                        String partName = partDataRS.getString(2);
+                        if(partQuantity == 0) {
+                            System.out.println("[ERROR] Product: " + partName + "(id: " + partID + ") is out of stock");
+                            break;
+                        }
+                        sql.executeUpdate(updateQuantity);  
+                        ResultSet transactionRS = sql.executeQuery(counttID);
+                        transactionRS.next();
+                        int transactionCount = transactionRS.getInt(1) + 1;
+                        String transactionInsert = "insert into transaction values(?, ?, ?, ?)";
+                        PreparedStatement transactionPS = mysql.prepareStatement(transactionInsert);
+                        transactionPS.setInt(1, transactionCount);
+                        transactionPS.setInt(2, partID);
+                        transactionPS.setInt(3, salespersonID);
+                        transactionPS.setDate(4,sqlDate);
+                        transactionPS.executeUpdate();
+                        System.out.println("Product: " + partName + "(id: " + partID + ") Remaining Quantity: " + partQuantity);
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
                     break;
                 case 3:
                     return;
@@ -484,7 +561,6 @@ public class Project {
             System.out.print("Enter Your Choice: ");
             
             int option = input.nextInt();
-            // update
             input.nextLine();
             
             
