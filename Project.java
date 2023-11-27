@@ -479,8 +479,8 @@ public class Project {
                     if (ordering == 1) order = "asc";
                     else if (ordering == 2) order = "desc";
                     String searchPart = "";
-                    if (criterion == 1) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where p.pName = '" + keyword + "' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
-                    else if (criterion == 2) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where m.mName = '" + keyword + "' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
+                    if (criterion == 1) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where p.pName like '%" + keyword + "%' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
+                    else if (criterion == 2) searchPart = "select p.pID, p.pName, m.mName, c.cName, p.pAvailableQuantity, p.pWarrantyPeriod, p.pPrice from computer_part p, manufacturer m, part_category c where m.mName like '%" + keyword + "%' and m.mID = p.mID and p.cID = c.cID order by p.pPrice " + order + ";";
                     try {
                         Connection mysql = connectToMySQL();
                         Statement sql = mysql.createStatement();
