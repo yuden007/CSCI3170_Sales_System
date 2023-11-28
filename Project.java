@@ -566,12 +566,132 @@ public class Project {
             
             switch(option) {
                 case 1:
+                    System.out.println("Choose ordering:");
+                    System.out.println("1. By ascending order");
+                    System.out.println("2. By descending order");
+                    System.out.println("Choose the list ordering:");
+                    int ordering = input.nextInt();
+                    input.nextLine();
+                    String order = "";
+                    if (ordering == 1) {
+                      order = "asc";  
+                    } 
+                    else if (ordering == 2) {
+                        order = "desc";
+                    }
+                    String query = "select s.sID, s.sName, s.sPhoneNumber, s.sExperience from salesperson s order by s.sExperience " + order + ";";
+                    try {
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet salespersons;
+                        salespersons = sql.executeQuery(query);
+                        System.out.println("| ID | Name | Mobile Phone | Years of Experience |");
+                        while(salespersons.next()) {
+                            System.out.print("| ");
+                            System.out.print(salespersons.getInt("sID") + " | ");
+                            System.out.print(salespersons.getString("sName") + " | ");
+                            System.out.print(salespersons.getInt("sPhoneNumber") + " | ");
+                            System.out.print(salespersons.getInt("sExperience") + " | ");
+                            System.out.println();
+                        }
+                    } catch(Exception e) {
+                        System.out.println(e);
+                    }
                     break;
                 case 2:
+                    System.out.println("Type in the lower bound for years of experience");
+                    int lowerBound = input.nextInt();
+                    input.nextLine();
+                    System.out.println("Type in the upper bound for years of experience");
+                    int upperBound = input.nextInt();
+                    input.nextLine();
+                    try {
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet salespersons;
+                    
+                        String query = "SELECT s.sID, s.sName, s.sExperience, COUNT(t.transactionID) AS transactionCount " +
+                                       "FROM salesperson s " +
+                                       "LEFT JOIN transaction t ON s.sID = t.sID " +
+                                       "WHERE s.sExperience >= " + lowerBound + " AND s.sExperience <= " + upperBound + " " +
+                                       "GROUP BY s.sID, s.sName, s.sExperience " +
+                                       "ORDER BY s.sID DESC";
+                    
+                        salespersons = sql.executeQuery(query);
+                    
+                        System.out.println("| ID | Name | Years of Experience | Number of Transaction |");
+                        while (salespersons.next()) {
+                            System.out.print("| ");
+                            System.out.print(salespersons.getInt("sID") + " | ");
+                            System.out.print(salespersons.getString("sName") + " | ");
+                            System.out.print(salespersons.getInt("sExperience") + " | ");
+                            System.out.print(salespersons.getInt("transactionCount") + " | ");
+                            System.out.println();
+                        }
+                        System.out.println("End of Query");
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                     break;
                 case 3:
+                    try {
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet manufacturers;
+                    
+                        String query = "SELECT m.mID, m.mName, SUM(p.pPrice) AS totalSales " +
+                                       "FROM manufacturer m " +
+                                       "JOIN part p ON m.mID = p.mID " +
+                                       "JOIN transaction t ON p.pID = t.pID " +
+                                       "GROUP BY m.mID, m.mName " +
+                                       "ORDER BY totalSales DESC";
+                                        
+                        manufacturers = sql.executeQuery(query);
+                    
+                        System.out.println("| Manufacturer ID | Manufacturer Name | Total Sales Value |");
+                        while (manufacturers.next()) {
+                            System.out.print("| ");
+                            System.out.print(manufacturers.getInt("manufacturerID") + " | ");
+                            System.out.print(manufacturers.getString("manufacturerName") + " | ");
+                            System.out.print(manufacturers.getDouble("totalSales") + " | ");
+                            System.out.println();
+                        }
+                    
+                        System.out.println("End of Query");
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                     break;
                 case 4:
+                    System.out.println("Type in the number of parts:"):
+                    int numParts = input.nextInt();
+                    input.nextLine();
+                    try {
+                        Connection mysql = connectToMySQL();
+                        Statement sql = mysql.createStatement();
+                        ResultSet parts;
+                    
+                        String query = "SELECT p.pID, p.pName, COUNT(t.tID) AS totalTransactions " +
+                                       "FROM part p " +
+                                       "JOIN transaction t ON p.pID = t.pID " +
+                                       "GROUP BY p.pID, p.pName " +
+                                       "ORDER BY totalTransactions DESC " +
+                                       "LIMIT " + numParts;
+                    
+                        parts = sql.executeQuery(query);
+                    
+                        System.out.println("| Part ID | Part Name | No. of Transaction |");
+                        while (parts.next()) {
+                            System.out.print("| ");
+                            System.out.print(parts.getInt("pID") + " | ");
+                            System.out.print(parts.getString("pName") + " | ");
+                            System.out.print(parts.getInt("totalTransactions") + " | ");
+                            System.out.println();
+                        }
+                        System.out.println("End of Query");
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
                     break;
                 case 5:
                     return;
