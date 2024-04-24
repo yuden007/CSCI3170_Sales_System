@@ -569,7 +569,7 @@ public class Project {
                     System.out.println("Choose ordering:");
                     System.out.println("1. By ascending order");
                     System.out.println("2. By descending order");
-                    System.out.println("Choose the list ordering:");
+                    System.out.print("Choose the list ordering: ");
                     int ordering = input.nextInt();
                     input.nextLine();
                     String order = "";
@@ -599,10 +599,10 @@ public class Project {
                     }
                     break;
                 case 2:
-                    System.out.println("Type in the lower bound for years of experience");
+                    System.out.print("Type in the lower bound for years of experience: ");
                     int lowerBound = input.nextInt();
                     input.nextLine();
-                    System.out.println("Type in the upper bound for years of experience");
+                    System.out.print("Type in the upper bound for years of experience: ");
                     int upperBound = input.nextInt();
                     input.nextLine();
                     try {
@@ -610,14 +610,15 @@ public class Project {
                         Statement sql = mysql.createStatement();
                         ResultSet salespersons;
                     
-                        String query = "SELECT s.sID, s.sName, s.sExperience, COUNT(t.transactionID) AS transactionCount " +
+                        String query2 = "SELECT s.sID, s.sName, s.sExperience, COUNT(t.tID) AS transactionCount " +
                                        "FROM salesperson s " +
-                                       "LEFT JOIN transaction t ON s.sID = t.sID " +
+                                     
+                                       "LEFT JOIN transaction t ON s.sID = t.sID " + 
                                        "WHERE s.sExperience >= " + lowerBound + " AND s.sExperience <= " + upperBound + " " +
                                        "GROUP BY s.sID, s.sName, s.sExperience " +
                                        "ORDER BY s.sID DESC";
                     
-                        salespersons = sql.executeQuery(query);
+                        salespersons = sql.executeQuery(query2);
                     
                         System.out.println("| ID | Name | Years of Experience | Number of Transaction |");
                         while (salespersons.next()) {
@@ -639,21 +640,21 @@ public class Project {
                         Statement sql = mysql.createStatement();
                         ResultSet manufacturers;
                     
-                        String query = "SELECT m.mID, m.mName, SUM(p.pPrice) AS totalSales " +
+                        String query3 = "SELECT m.mID, m.mName, SUM(p.pPrice) AS totalSales " +
                                        "FROM manufacturer m " +
-                                       "JOIN part p ON m.mID = p.mID " +
+                                       "JOIN computer_part p ON m.mID = p.mID " +
                                        "JOIN transaction t ON p.pID = t.pID " +
                                        "GROUP BY m.mID, m.mName " +
                                        "ORDER BY totalSales DESC";
                                         
-                        manufacturers = sql.executeQuery(query);
+                        manufacturers = sql.executeQuery(query3);
                     
                         System.out.println("| Manufacturer ID | Manufacturer Name | Total Sales Value |");
                         while (manufacturers.next()) {
                             System.out.print("| ");
-                            System.out.print(manufacturers.getInt("manufacturerID") + " | ");
-                            System.out.print(manufacturers.getString("manufacturerName") + " | ");
-                            System.out.print(manufacturers.getDouble("totalSales") + " | ");
+                            System.out.print(manufacturers.getInt("mID") + " | ");
+                            System.out.print(manufacturers.getString("mName") + " | ");
+                            System.out.print(manufacturers.getInt("totalSales") + " | ");
                             System.out.println();
                         }
                     
@@ -663,7 +664,7 @@ public class Project {
                     }
                     break;
                 case 4:
-                    System.out.println("Type in the number of parts:"):
+                    System.out.print("Type in the number of parts: ");
                     int numParts = input.nextInt();
                     input.nextLine();
                     try {
@@ -671,14 +672,14 @@ public class Project {
                         Statement sql = mysql.createStatement();
                         ResultSet parts;
                     
-                        String query = "SELECT p.pID, p.pName, COUNT(t.tID) AS totalTransactions " +
-                                       "FROM part p " +
+                        String query4 = "SELECT p.pID, p.pName, COUNT(t.tID) AS totalTransactions " +
+                                       "FROM computer_part p " +
                                        "JOIN transaction t ON p.pID = t.pID " +
                                        "GROUP BY p.pID, p.pName " +
                                        "ORDER BY totalTransactions DESC " +
                                        "LIMIT " + numParts;
                     
-                        parts = sql.executeQuery(query);
+                        parts = sql.executeQuery(query4);
                     
                         System.out.println("| Part ID | Part Name | No. of Transaction |");
                         while (parts.next()) {
